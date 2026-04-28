@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#ff8c42">
+<title>Vakantie Bingo 🌴</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+        overscroll-behavior: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+
+    body {
+        font-family: 'DM Sans', sans-serif;
+        min-height: 100vh;
+        background: linear-gradient(180deg, 
+            #ffd89b 0%, 
+            #ffb88c 25%, 
+            #ff8c69 50%, 
+            #74b9ff 75%, 
+            #0984e3 100%);
+        background-attachment: fixed;
+        overflow-x: hidden;
+        position: relative;
+        padding: 20px 12px 40px;
+    }
+
+    /* Bewegende zon */
+    .sun {
+        position: fixed;
+        top: 8%;
+        right: 10%;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, #fff5b8 0%, #ffd93d 40%, #ff9a3c 100%);
+        border-radius: 50%;
+        box-shadow: 0 0 60px rgba(255, 217, 61, 0.6),
+                    0 0 100px rgba(255, 154, 60, 0.4);
+        animation: sunGlow 4s ease-in-out infinite;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    @keyframes sunGlow {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(255, 217, 61, 0.6), 0 0 100px rgba(255, 154, 60, 0.4); }
+        50% { transform: scale(1.08); box-shadow: 0 0 80px rgba(255, 217, 61, 0.8), 0 0 140px rgba(255, 154, 60, 0.6); }
+    }
+
+    /* Wolken */
+    .cloud {
+        position: fixed;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 100px;
+        z-index: 0;
+        pointer-events: none;
+        filter: blur(1px);
+    }
+    .cloud::before, .cloud::after {
+        content: '';
+        position: absolute;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
+    }
+    .cloud-1 {
+        width: 80px; height: 25px;
+        top: 12%; left: -100px;
+        animation: drift 35s linear infinite;
+    }
+    .cloud-1::before { width: 40px; height: 40px; top: -18px; left: 12px; }
+    .cloud-1::after { width: 50px; height: 50px; top: -25px; left: 35px; }
+
+    .cloud-2 {
+        width: 60px; height: 20px;
+        top: 25%; left: -80px;
+        animation: drift 50s linear infinite;
+        animation-delay: -15s;
+    }
+    .cloud-2::before { width: 30px; height: 30px; top: -14px; left: 8px; }
+    .cloud-2::after { width: 38px; height: 38px; top: -20px; left: 25px; }
+
+    @keyframes drift {
+        from { transform: translateX(0); }
+        to { transform: translateX(calc(100vw + 200px)); }
+    }
+
+    /* Palmboom silhouet */
+    .palm {
+        position: fixed;
+        bottom: -20px;
+        font-size: 80px;
+        z-index: 0;
+        pointer-events: none;
+        animation: sway 6s ease-in-out infinite;
+        transform-origin: bottom center;
+        opacity: 0.9;
+    }
+    .palm-left { left: -10px; animation-delay: -2s; }
+    .palm-right { right: -10px; transform: scaleX(-1); }
+
+    @keyframes sway {
+        0%, 100% { transform: rotate(-2deg); }
+        50% { transform: rotate(2deg); }
+    }
+    .palm-right { 
+        animation: swayRight 6s ease-in-out infinite;
+    }
+    @keyframes swayRight {
+        0%, 100% { transform: scaleX(-1) rotate(-2deg); }
+        50% { transform: scaleX(-1) rotate(2deg); }
+    }
+
+    /* Drijvende emoji's op achtergrond */
+    .float-emoji {
+        position: fixed;
+        font-size: 24px;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0.5;
+        animation: float 15s ease-in-out infinite;
+    }
+    .float-1 { top: 40%; left: 5%; animation-delay: 0s; }
+    .float-2 { top: 60%; right: 8%; animation-delay: -5s; font-size: 30px; }
+    .float-3 { top: 75%; left: 12%; animation-delay: -8s; }
+    .float-4 { top: 30%; right: 20%; animation-delay: -3s; }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(-5deg); }
+        50% { transform: translateY(-20px) rotate(5deg); }
+    }
+
+    /* Container */
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Header */
+    header {
+        text-align: center;
+        margin-bottom: 24px;
+        position: relative;
+    }
+
+    h1 {
+        font-family: 'Caveat Brush', cursive;
+        font-size: clamp(48px, 13vw, 72px);
+        color: #fff;
+        text-shadow: 4px 4px 0 #ff6b6b,
+                     6px 6px 0 rgba(0,0,0,0.15);
+        letter-spacing: 2px;
+        line-height: 0.95;
+        transform: rotate(-2deg);
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        font-family: 'Fraunces', serif;
+        font-style: italic;
+        font-weight: 600;
+        color: #fff;
+        font-size: clamp(14px, 4vw, 18px);
+        text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+        letter-spacing: 1px;
+    }
+
+    .progress {
+        display: inline-block;
+        background: rgba(255,255,255,0.95);
+        padding: 6px 16px;
+        border-radius: 30px;
+        margin-top: 12px;
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 700;
+        color: #d63031;
+        font-size: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border: 2px solid #fff;
+    }
+
+    /* Bingo grid */
+    .grid-wrap {
+        position: relative;
+    }
+
+    .bingo-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+        background: rgba(255,255,255,0.25);
+        padding: 8px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2),
+                    inset 0 1px 0 rgba(255,255,255,0.5);
+        border: 2px solid rgba(255,255,255,0.4);
+    }
+
+    .cell {
+        aspect-ratio: 1 / 1;
+        background: linear-gradient(135deg, #fff9f0 0%, #fff 100%);
+        border-radius: 12px;
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 600;
+        font-size: clamp(8px, 2vw, 11px);
+        line-height: 1.15;
+        color: #2d3436;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1),
+                    inset 0 1px 0 rgba(255,255,255,0.8);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        border: 1.5px solid rgba(255, 140, 66, 0.2);
+    }
+
+    .cell:active {
+        transform: scale(0.95);
+    }
+
+    .cell.free {
+        background: linear-gradient(135deg, #ffd93d 0%, #ff9a3c 100%);
+        color: #fff;
+        font-family: 'Caveat Brush', cursive;
+        font-size: clamp(16px, 5vw, 24px);
+        text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        letter-spacing: 1px;
+    }
+
+    .cell.free::before {
+        content: '⭐';
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        font-size: 14px;
+    }
+    .cell.free::after {
+        content: '🌴';
+        position: absolute;
+        bottom: 4px;
+        left: 4px;
+        font-size: 14px;
+    }
+
+    /* Het rode kruis */
+    .cell .cross {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .cell .cross::before,
+    .cell .cross::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 10%;
+        width: 80%;
+        height: 8px;
+        background: #e63946;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(230, 57, 70, 0.5);
+        transform-origin: center;
+    }
+
+    .cell .cross::before {
+        transform: translateY(-50%) rotate(45deg) scaleX(0);
+        transition: transform 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .cell .cross::after {
+        transform: translateY(-50%) rotate(-45deg) scaleX(0);
+        transition: transform 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        transition-delay: 0.1s;
+    }
+
+    .cell.checked .cross {
+        opacity: 1;
+    }
+
+    .cell.checked .cross::before {
+        transform: translateY(-50%) rotate(45deg) scaleX(1);
+    }
+
+    .cell.checked .cross::after {
+        transform: translateY(-50%) rotate(-45deg) scaleX(1);
+    }
+
+    .cell.checked {
+        background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+    }
+
+    /* Bingo win line overlay */
+    .win-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    .win-line {
+        stroke: #e63946;
+        stroke-width: 10;
+        stroke-linecap: round;
+        filter: drop-shadow(0 2px 8px rgba(230, 57, 70, 0.6));
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+        opacity: 0;
+    }
+
+    .win-line.draw {
+        animation: drawLine 0.4s ease-out forwards, fadeOutLine 0.4s ease 1.6s forwards;
+    }
+
+    @keyframes drawLine {
+        from { stroke-dashoffset: 1000; opacity: 1; }
+        to { stroke-dashoffset: 0; opacity: 1; }
+    }
+
+    @keyframes fadeOutLine {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+
+    /* Reset knop */
+    .reset-btn {
+        display: block;
+        margin: 24px auto 0;
+        background: rgba(255,255,255,0.95);
+        border: 2px solid #fff;
+        padding: 10px 24px;
+        border-radius: 30px;
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 700;
+        color: #d63031;
+        font-size: 14px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transition: transform 0.15s ease;
+    }
+
+    .reset-btn:active {
+        transform: scale(0.95);
+    }
+
+    /* BINGO! overlay */
+    .bingo-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .bingo-overlay.show {
+        display: flex;
+    }
+
+    .bingo-message {
+        font-family: 'Caveat Brush', cursive;
+        font-size: clamp(80px, 25vw, 160px);
+        color: #ffd93d;
+        text-shadow: 6px 6px 0 #e63946,
+                     12px 12px 0 rgba(0,0,0,0.3);
+        animation: bounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        letter-spacing: 4px;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes bounce {
+        0% { transform: scale(0) rotate(-30deg); }
+        60% { transform: scale(1.2) rotate(5deg); }
+        100% { transform: scale(1) rotate(-3deg); }
+    }
+
+    /* Confetti */
+    .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        z-index: 99;
+        pointer-events: none;
+    }
+
+    /* Footer */
+    footer {
+        text-align: center;
+        margin-top: 20px;
+        color: rgba(255,255,255,0.9);
+        font-family: 'Fraunces', serif;
+        font-style: italic;
+        font-size: 12px;
+        text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 380px) {
+        .bingo-grid { gap: 4px; padding: 6px; }
+        .cell { padding: 4px; border-radius: 10px; }
+    }
+</style>
+</head>
+<body>
+    <!-- Achtergrond elementen -->
+    <div class="sun"></div>
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="palm palm-left">🌴</div>
+    <div class="palm palm-right">🌴</div>
+    <div class="float-emoji float-1">🍹</div>
+    <div class="float-emoji float-2">🏖️</div>
+    <div class="float-emoji float-3">🐚</div>
+    <div class="float-emoji float-4">⛱️</div>
+
+    <div class="container">
+        <header>
+            <h1>Vakantie<br>Bingo!</h1>
+            <div class="subtitle">~ ¡Vamos a la playa! ~</div>
+            <div class="progress" id="progress">0 / 25 afgevinkt</div>
+        </header>
+
+        <div class="grid-wrap">
+            <div class="bingo-grid" id="grid"></div>
+            <svg class="win-overlay" id="winOverlay" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"></svg>
+        </div>
+
+        <button class="reset-btn" id="resetBtn">🔄 Reset kaart</button>
+
+        <footer></footer>
+    </div>
+
+    <div class="bingo-overlay" id="bingoOverlay">
+        <div class="bingo-message">BINGO!</div>
+    </div>
+
+<script>
+    const items = [
+        "Iets nieuws proeven",
+        "Een prijs afdingen",
+        "Nieuw shotje proberen",
+        "Paella eten",
+        "Kan/emmer sangria",
+        "Lied 'Brabant' horen",
+        "Karaoke zingen",
+        "1 liter cocktail",
+        "Lokaal biertje",
+        "Brabander vinden",
+        "Nummertje aanvragen",
+        "Spaans woord leren",
+        "GRATIS",
+        "Cocktail met parapluutje",
+        "'s Nachts naar McDonalds",
+        "Kapsalon bestellen bij Spaanse snackbar",
+        "Per ongeluk selfie ipv foto",
+        "Steen-papier-schaar voor drankje",
+        "Op strand in slaap vallen",
+        "Iemands socials krijgen",
+        "Gratis shotjes krijgen",
+        "Bonden met vreemden op terras",
+        "Fles champagne poppen",
+        "Een 'troffee' s̶t̶e̶l̶e̶n̶ krijgen",
+        "Groepsfoto fotobomben"
+    ];
+
+    const STORAGE_KEY = 'vakantie-bingo-state';
+    const grid = document.getElementById('grid');
+    const progressEl = document.getElementById('progress');
+    const bingoOverlay = document.getElementById('bingoOverlay');
+    let checkedState = [];
+    let bingoShown = false;
+
+    // Laad opgeslagen state
+    function loadState() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed) && parsed.length === 25) {
+                    return parsed;
+                }
+            }
+        } catch (e) {}
+        return new Array(25).fill(false);
+    }
+
+    function saveState() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedState));
+        } catch (e) {}
+    }
+
+    function buildGrid() {
+        grid.innerHTML = '';
+        items.forEach((text, i) => {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            if (text === 'GRATIS') cell.classList.add('free');
+            if (checkedState[i]) cell.classList.add('checked');
+            
+            const span = document.createElement('span');
+            span.style.position = 'relative';
+            span.style.zIndex = '1';
+            span.innerHTML = text;
+            cell.appendChild(span);
+
+            const cross = document.createElement('div');
+            cross.className = 'cross';
+            cell.appendChild(cross);
+
+            cell.addEventListener('click', () => toggleCell(i, cell));
+            grid.appendChild(cell);
+        });
+        updateProgress();
+    }
+
+    function toggleCell(i, cell) {
+        checkedState[i] = !checkedState[i];
+        cell.classList.toggle('checked');
+        saveState();
+        updateProgress();
+        checkBingo();
+    }
+
+    function updateProgress() {
+        const count = checkedState.filter(Boolean).length;
+        progressEl.textContent = `${count} / 25 afgevinkt`;
+    }
+
+    // Alle mogelijke bingo lijnen
+    const BINGO_LINES = [
+        // Rijen
+        {cells:[0,1,2,3,4], type:'row', idx:0},
+        {cells:[5,6,7,8,9], type:'row', idx:1},
+        {cells:[10,11,12,13,14], type:'row', idx:2},
+        {cells:[15,16,17,18,19], type:'row', idx:3},
+        {cells:[20,21,22,23,24], type:'row', idx:4},
+        // Kolommen
+        {cells:[0,5,10,15,20], type:'col', idx:0},
+        {cells:[1,6,11,16,21], type:'col', idx:1},
+        {cells:[2,7,12,17,22], type:'col', idx:2},
+        {cells:[3,8,13,18,23], type:'col', idx:3},
+        {cells:[4,9,14,19,24], type:'col', idx:4},
+        // Diagonalen
+        {cells:[0,6,12,18,24], type:'diag', idx:0},
+        {cells:[4,8,12,16,20], type:'diag', idx:1}
+    ];
+
+    let completedLines = new Set();
+
+    // Check voor bingo (rij, kolom, diagonaal)
+    function checkBingo() {
+        for (const line of BINGO_LINES) {
+            const key = line.type + '-' + line.idx;
+            const isComplete = line.cells.every(idx => checkedState[idx]);
+            if (isComplete && !completedLines.has(key)) {
+                completedLines.add(key);
+                drawWinLine(line);
+            } else if (!isComplete && completedLines.has(key)) {
+                completedLines.delete(key);
+            }
+        }
+        // BINGO! alleen als ALLE 25 vakjes zijn afgevinkt
+        const allChecked = checkedState.every(Boolean);
+        if (allChecked && !bingoShown) {
+            showBingo();
+            bingoShown = true;
+        }
+        if (!allChecked) bingoShown = false;
+    }
+
+    function drawWinLine(line) {
+        const overlay = document.getElementById('winOverlay');
+        const gridEl = document.getElementById('grid');
+        const rect = gridEl.getBoundingClientRect();
+        const cells = gridEl.children;
+        const firstCell = cells[line.cells[0]].getBoundingClientRect();
+        const lastCell = cells[line.cells[4]].getBoundingClientRect();
+
+        const x1 = firstCell.left - rect.left + firstCell.width / 2;
+        const y1 = firstCell.top - rect.top + firstCell.height / 2;
+        const x2 = lastCell.left - rect.left + lastCell.width / 2;
+        const y2 = lastCell.top - rect.top + lastCell.height / 2;
+
+        // Set viewBox to match grid size
+        overlay.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
+
+        const svgNS = 'http://www.w3.org/2000/svg';
+        const lineEl = document.createElementNS(svgNS, 'line');
+        lineEl.setAttribute('x1', x1);
+        lineEl.setAttribute('y1', y1);
+        lineEl.setAttribute('x2', x2);
+        lineEl.setAttribute('y2', y2);
+        lineEl.setAttribute('class', 'win-line draw');
+        overlay.appendChild(lineEl);
+
+        // Verwijder na animatie (2 seconden totaal)
+        setTimeout(() => {
+            if (lineEl.parentNode) lineEl.parentNode.removeChild(lineEl);
+        }, 2100);
+    }
+
+    function showBingo() {
+        bingoOverlay.classList.add('show');
+        launchConfetti();
+        // Tweede en derde golf voor extra feest
+        setTimeout(launchConfetti, 600);
+        setTimeout(launchConfetti, 1200);
+        setTimeout(() => {
+            bingoOverlay.classList.remove('show');
+        }, 3500);
+    }
+
+    function launchConfetti() {
+        const colors = ['#ffd93d','#ff6b6b','#74b9ff','#55efc4','#fd79a8','#ff9a3c','#a29bfe'];
+        for (let i = 0; i < 80; i++) {
+            const c = document.createElement('div');
+            c.className = 'confetti';
+            c.style.left = Math.random() * 100 + 'vw';
+            c.style.top = '-20px';
+            c.style.background = colors[Math.floor(Math.random()*colors.length)];
+            c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+            c.style.transform = `rotate(${Math.random()*360}deg)`;
+            const size = 8 + Math.random() * 8;
+            c.style.width = size + 'px';
+            c.style.height = size + 'px';
+            const duration = 2.5 + Math.random() * 2.5;
+            c.style.animation = `confettiFall ${duration}s linear forwards`;
+            document.body.appendChild(c);
+            setTimeout(() => c.remove(), duration * 1000);
+        }
+    }
+
+    // Confetti animatie injecten
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = `
+        @keyframes confettiFall {
+            to {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(styleSheet);
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        if (confirm('Weet je zeker dat je alle vakjes wilt resetten?')) {
+            checkedState = new Array(25).fill(false);
+            saveState();
+            bingoShown = false;
+            completedLines.clear();
+            document.getElementById('winOverlay').innerHTML = '';
+            buildGrid();
+        }
+    });
+
+    // Init
+    checkedState = loadState();
+    // Markeer al voltooide lijnen zonder ze opnieuw te tekenen
+    for (const line of BINGO_LINES) {
+        if (line.cells.every(idx => checkedState[idx])) {
+            completedLines.add(line.type + '-' + line.idx);
+        }
+    }
+    if (checkedState.every(Boolean)) bingoShown = true;
+    buildGrid();
+</script>
+</body>
+</html>
